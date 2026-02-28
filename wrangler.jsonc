@@ -1,6 +1,5 @@
 {
   "name": "portfolio-v2",
-  "main": "./dist/_worker.js/index.js",
   "pages_build_output_dir": "./dist",
   "observability": {
     "enabled": true
