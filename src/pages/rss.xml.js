@@ -18,7 +18,7 @@ export async function GET(context) {
     description: "The Noob writes about tech and anything he wants to :)",
     // Pull in your project "site" from the endpoint context
     // https://docs.astro.build/en/reference/api-reference/#contextsite
-    site: context.site ?? "https://noobscience.in",
+    site: context.site ?? "https://v2.noobscience.in",
     // Array of `<item>`s in output xml
     // See "Generating items" section for examples using content collections and glob imports
     items: posts.map((post) => ({

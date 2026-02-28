@@ -11,7 +11,7 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   prefetch: true,
-  site: "https://www.noobscience.in",
+  site: "https://v2.noobscience.in",
   integrations: [react(), tailwind(), mdx(), sitemap()],
   markdown: {
     gfm: true,
