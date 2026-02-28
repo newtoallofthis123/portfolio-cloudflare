@@ -1,6 +1,8 @@
 {
   "name": "portfolio-v2",
   "pages_build_output_dir": "./dist",
+  "compatibility_date": "2024-12-01",
+  "compatibility_flags": ["nodejs_compat", "streams_enable_constructors"],
   "observability": {
     "enabled": true
   }
