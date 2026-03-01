@@ -8,15 +8,15 @@ import Char from "../spans/char.astro";
 import Invideo from "../assets/invideo.svg";
 import figlet from "figlet";
 import slantFont from "figlet/fonts/Slant";
-import doomFont from "figlet/fonts/Doom";
-import bigFont from "figlet/fonts/Big";
+import standardFont from "figlet/fonts/Standard";
+import smallSlantFont from "figlet/fonts/Small Slant";
 
 figlet.parseFont("Slant", slantFont);
-figlet.parseFont("Doom", doomFont);
-figlet.parseFont("Big", bigFont);
+figlet.parseFont("Standard", standardFont);
+figlet.parseFont("Small Slant", smallSlantFont);
 
 const bannerTexts = ["Ishan Joshi", "Happy Holi"];
-const bannerFonts = ["Slant", "Doom", "Big"] as const;
+const bannerFonts = ["Slant", "Standard", "Small Slant"] as const;
 
 // asciiArts[fontIndex][textIndex]
 const asciiArts: string[][] = bannerFonts.map((font) =>
@@ -35,19 +35,17 @@ posts = posts.sort(
   <h1 class="md:text-xl text-lg">
     Hi Internet Friend! I am <Bold>The Noob!</Bold>
   </h1>
-  <div id="banner" class="my-2">
+  <ascii-banner data-arts={JSON.stringify(asciiArts)} class="block my-2">
+    <canvas
+      role="img"
+      aria-label="ASCII art: Ishan Joshi"
+      class="block"
+    ></canvas>
     <pre
-      id="ascii-art"
-      class="text-mx sm:text-base font-mono leading-tight"
-      set:html={asciiArts[0][0]}
-    />
-  </div>
-  <script
-    is:inline
-    id="ascii-data"
-    type="application/json"
-    set:html={JSON.stringify(asciiArts)}
-  />
+      class="font-mono leading-tight text-sm sr-only"
+      aria-hidden="true"
+    >{asciiArts[0][0]}</pre>
+  </ascii-banner>
   <p>
     I am a 🎓 Student and an Engineer at <span id="inline-icon">
       <Invideo />
@@ -97,145 +95,7 @@ posts = posts.sort(
     list-style: lower-alpha;
   }
 
-  #ascii-art {
-    white-space: pre;
-    overflow-x: hidden;
-  }
 </style>
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    const el = document.getElementById("ascii-art");
-    const dataEl = document.getElementById("ascii-data");
-    if (!el || !dataEl) return;
-
-    // asciiArts[fontIndex][textIndex]
-    const asciiArts = JSON.parse(dataEl.textContent);
-
-    const GLITCH_CHARS = "!@#$%^&*()_+-=[]{}|;:',.<>?/~`0123456789";
-    const GLITCH_DURATION = 600;
-    const FRAME_RATE = 50;
-    const INITIAL_DELAY = 2000;
-
-    function padLines(art) {
-      const lines = art.split("\n");
-      const maxWidth = Math.max(...lines.map((l) => l.length));
-      return lines.map((l) => l.padEnd(maxWidth));
-    }
-
-    function morph(from, to, onComplete) {
-      const fromLines = padLines(from);
-      const toLines = padLines(to);
-
-      const maxLines = Math.max(fromLines.length, toLines.length);
-      const maxWidth = Math.max(
-        fromLines[0]?.length || 0,
-        toLines[0]?.length || 0
-      );
-      while (fromLines.length < maxLines) fromLines.push(" ".repeat(maxWidth));
-      while (toLines.length < maxLines) toLines.push(" ".repeat(maxWidth));
-
-      const fromGrid = fromLines.map((l) => l.padEnd(maxWidth));
-      const toGrid = toLines.map((l) => l.padEnd(maxWidth));
-
-      const totalFrames = Math.floor(GLITCH_DURATION / FRAME_RATE);
-      let frame = 0;
-
-      const interval = setInterval(() => {
-        frame++;
-        const progress = frame / totalFrames;
-
-        const result = fromGrid.map((line, row) => {
-          return Array.from(line)
-            .map((char, col) => {
-              const targetChar = toGrid[row]?.[col] ?? " ";
-              const threshold =
-                (Math.sin(row * 13.37 + col * 7.13) * 0.5 + 0.5) * 0.7 + 0.15;
-
-              if (progress >= threshold) {
-                return targetChar;
-              } else if (progress > threshold * 0.3) {
-                return GLITCH_CHARS[
-                  Math.floor(Math.random() * GLITCH_CHARS.length)
-                ];
-              } else {
-                return char;
-              }
-            })
-            .join("");
-        });
-
-        el.textContent = result.join("\n");
-
-        if (frame >= totalFrames) {
-          clearInterval(interval);
-          el.textContent = to;
-          onComplete?.();
-        }
-      }, FRAME_RATE);
-    }
-
-    const PAUSE_INITIAL = 2000;
-    const PAUSE_STEP = 1000;
-    const PAUSE_MAX = 10000;
-
-    // Pick a random font for this page load
-    const fontIndex = Math.floor(Math.random() * asciiArts.length);
-    const fontArts = asciiArts[fontIndex];
-
-    let currentTextIndex = 0;
-    let nextPause = PAUSE_INITIAL;
-    let cycleTimer = null;
-    let scrambleInterval = null;
-    let isMorphing = false;
-
-    el.textContent = fontArts[0];
-
-    function scheduleCycle() {
-      cycleTimer = setTimeout(cycle, nextPause);
-      nextPause = Math.min(nextPause + PAUSE_STEP, PAUSE_MAX);
-    }
-
-    function cycle() {
-      if (isMorphing) return;
-      isMorphing = true;
-      const nextTextIndex = (currentTextIndex + 1) % fontArts.length;
-      morph(fontArts[currentTextIndex], fontArts[nextTextIndex], () => {
-        currentTextIndex = nextTextIndex;
-        isMorphing = false;
-        scheduleCycle();
-      });
-    }
-
-    // Hover scramble: continuously randomise characters while hovering
-    el.addEventListener("mouseenter", () => {
-      clearTimeout(cycleTimer);
-      if (isMorphing) return;
-      const lines = padLines(fontArts[currentTextIndex]);
-      const width = lines[0]?.length || 0;
-      scrambleInterval = setInterval(() => {
-        el.textContent = lines
-          .map((line) =>
-            Array.from(line)
-              .map((ch) =>
-                ch === " "
-                  ? " "
-                  : GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
-              )
-              .join("")
-          )
-          .join("\n");
-      }, FRAME_RATE);
-    });
-
-    el.addEventListener("mouseleave", () => {
-      clearInterval(scrambleInterval);
-      scrambleInterval = null;
-      if (!isMorphing) {
-        el.textContent = fontArts[currentTextIndex];
-        scheduleCycle();
-      }
-    });
-
-    scheduleCycle();
-  });
+<script>
+  import '../scripts/ascii-banner.ts';
 </script>
