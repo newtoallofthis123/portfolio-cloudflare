@@ -3,6 +3,7 @@ import Base from "../../layouts/base.astro";
 import Char from "../../spans/char.astro";
 import Highlight from "../../spans/highlight.astro";
 import Link from "../../spans/link.astro";
+import BlogList from "../../components/BlogList";
 import { getCollection } from "astro:content";
 
 let posts = await getCollection("blog");
@@ -11,6 +12,18 @@ posts = posts.sort(
   (a: any, b: any) =>
     new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
+
+const postData = posts.map((post) => ({
+  slug: post.slug,
+  title: post.data.title,
+  date: post.data.date.toISOString(),
+  description: post.data.description ?? "",
+  emoji: post.data.emoji,
+  color: post.data.color,
+  bg: post.data.bg,
+  tags: post.data.tags,
+  imgSrc: post.data.img?.src,
+}));
 ---
 
 <Base title="NoobLog">
@@ -38,17 +51,6 @@ posts = posts.sort(
     <Char char="~" /> posts.sorted();
   </h2>
   <div class="md:w-2/3 md:p-0 pr-2">
-    {
-      posts.map((post) => (
-        <div class="pb-2 flex flex-row items-baseline justify-between gap-x-4">
-          <h2>
-            <Link href={`/blog/${post.slug}`}>{post.data.title}</Link>
-          </h2>
-          <p class="text-rosePineDawn-subtle dark:text-rosePine-subtle">
-            {new Date(post.data.date).toLocaleDateString()}
-          </p>
-        </div>
-      ))
-    }
+    <BlogList posts={postData} client:load />
   </div>
 </Base>
