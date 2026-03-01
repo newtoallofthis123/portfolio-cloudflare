@@ -6,6 +6,22 @@ import Link from "../spans/link.astro";
 import { getCollection } from "astro:content";
 import Char from "../spans/char.astro";
 import Invideo from "../assets/invideo.svg";
+import figlet from "figlet";
+import slantFont from "figlet/fonts/Slant";
+import standardFont from "figlet/fonts/Standard";
+import smallSlantFont from "figlet/fonts/Small Slant";
+
+figlet.parseFont("Slant", slantFont);
+figlet.parseFont("Standard", standardFont);
+figlet.parseFont("Small Slant", smallSlantFont);
+
+const bannerTexts = ["Ishan Joshi", "Happy Holi"];
+const bannerFonts = ["Slant", "Standard", "Small Slant"] as const;
+
+// asciiArts[fontIndex][textIndex]
+const asciiArts: string[][] = bannerFonts.map((font) =>
+  bannerTexts.map((text) => figlet.textSync(text, { font }))
+);
 
 let posts = await getCollection("blog");
 posts = posts.filter((post) => !post.data.draft);
@@ -19,16 +35,17 @@ posts = posts.sort(
   <h1 class="md:text-xl text-lg">
     Hi Internet Friend! I am <Bold>The Noob!</Bold>
   </h1>
-  <div id="banner" class="my-2 text-dark dark:text-white">
+  <ascii-banner data-arts={JSON.stringify(asciiArts)} class="block my-2">
+    <canvas
+      role="img"
+      aria-label="ASCII art: Ishan Joshi"
+      class="block"
+    ></canvas>
     <pre
-      class="text-mx sm:text-base">
-	<span>____</span>     <span>__                       __           __    _</span> 
-   <span>/  _/____/ /_  ____</span><span> _____         / /___  _____/ /_  (_)</span>
-   / //<span> ___/ __ \/ __</span> `/ __ <span>\   __  / / __ \/ ___/ __ \/ / </span>
- _/ /(__  <span> ) / / / /_/ / / / /  / /_/ </span><span>/ /_/ (__  ) / / / /</span>
-<span>/___/____/_/ /_/\_</span>_,_/_/ /_/   \<span>____/\____/____/_/ /_/_/</span>
-		</pre>
-  </div>
+      class="font-mono leading-tight text-sm sr-only"
+      aria-hidden="true"
+    >{asciiArts[0][0]}</pre>
+  </ascii-banner>
   <p>
     I am a 🎓 Student and an Engineer at <span id="inline-icon">
       <Invideo />
@@ -77,4 +94,8 @@ posts = posts.sort(
     padding-left: 1.9rem;
     list-style: lower-alpha;
   }
+
 </style>
+<script>
+  import '../scripts/ascii-banner.ts';
+</script>
