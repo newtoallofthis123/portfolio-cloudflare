@@ -27,6 +27,7 @@
     "bootstrap-icons": "^1.11.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "figlet": "^1.10.0",
     "lucide-react": "^0.513.0",
     "markdown-it": "^14.1.0",
     "marked": "^14.0.0",
@@ -44,6 +45,7 @@
     "typescript": "^5.5.2"
   },
   "devDependencies": {
-    "@catppuccin/tailwindcss": "^0.1.6"
+    "@catppuccin/tailwindcss": "^0.1.6",
+    "@types/figlet": "^1.7.0"
   }
 }
