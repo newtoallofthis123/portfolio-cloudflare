@@ -3,6 +3,7 @@ import { siFramer, siGithub, siGo, siRust } from "simple-icons";
 import Base from "../layouts/base.astro";
 import Bold from "../spans/bold.astro";
 import Link from "../spans/link.astro";
+import BlogList from "@/components/BlogList";
 import { getCollection } from "astro:content";
 import Char from "../spans/char.astro";
 import Invideo from "../assets/invideo.svg";
@@ -29,6 +30,18 @@ posts = posts.sort(
   (a: any, b: any) =>
     new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
+
+const postData = posts.slice(0, 8).map((post) => ({
+  slug: post.slug,
+  title: post.data.title,
+  date: post.data.date.toISOString(),
+  description: post.data.description ?? "",
+  emoji: post.data.emoji,
+  color: post.data.color,
+  bg: post.data.bg,
+  tags: post.data.tags,
+  imgSrc: post.data.img?.src,
+}));
 ---
 
 <Base>
@@ -72,20 +85,7 @@ posts = posts.sort(
     <h2 class="pb-3 md:text-2xl text-xl font-bold font-geist-mono">
       <Char /> show_blog_posts();
     </h2>
-    <div>
-      {
-        posts.slice(0, 8).map((post) => (
-          <div class="pb-2 flex flex-row items-baseline justify-between gap-x-4">
-            <h2 class="underline decoration-0.5 decoration-dotted">
-              <Link href={`/blog/${post.slug}`}>{post.data.title}</Link>
-            </h2>
-            <p class="text-rosePineDawn-subtle dark:text-rosePine-subtle">
-              {new Date(post.data.date).toLocaleDateString()}
-            </p>
-          </div>
-        ))
-      }
-    </div>
+    <BlogList posts={postData} client:load />
   </div>
 </Base>
 <style>
