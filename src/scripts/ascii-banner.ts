@@ -37,13 +37,12 @@ class AsciiBanner extends HTMLElement {
 
   // Cycle state
   private currentTextIndex = 0;
-  private nextPause = 2000;
+  private nextPause = 5000;
   private cycleTimer = 0;
   private isMorphing = false;
 
   private readonly GLITCH_CHARS = "!@#$%^&*()_+-=[]{}|;:',.<>?/~`0123456789";
-  private readonly PAUSE_STEP = 1000;
-  private readonly PAUSE_MAX = 10000;
+  private readonly PAUSE_MAX = 30000;
   private readonly INITIAL_DELAY = 2000;
 
   // Physics
@@ -153,7 +152,7 @@ class AsciiBanner extends HTMLElement {
 
   private scheduleCycle() {
     this.cycleTimer = window.setTimeout(() => this.cycle(), this.nextPause);
-    this.nextPause = Math.min(this.nextPause + this.PAUSE_STEP, this.PAUSE_MAX);
+    this.nextPause = Math.min(this.nextPause * 2, this.PAUSE_MAX);
   }
 
   private cycle() {
