@@ -22,7 +22,17 @@ const meta = post?.data;
 >
   {
     meta?.bg && (
-      <div class="fixed inset-0 -z-10 w-full h-full light:block dark:hidden" style={`background-color: ${meta.bg};`} />
+      <div class={`fixed inset-0 -z-10 w-full h-full light:block ${meta.bgDark ? "" : "dark:hidden"}`} style={`background-color: ${meta.bg};`} />
+    )
+  }
+  {
+    meta?.bgDark && (
+      <div class="fixed inset-0 -z-10 w-full h-full hidden dark:block" style={`background-color: ${meta.bgDark};`} />
+    )
+  }
+  {
+    meta?.fg && (
+      <style is:global set:html={`body, body * { color: ${meta.fg} !important; } body nav a:hover { color: ${meta.bg} !important; }`} />
     )
   }
   <div class="md:px-2">

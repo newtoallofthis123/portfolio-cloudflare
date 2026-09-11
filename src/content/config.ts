@@ -16,6 +16,8 @@ const blogContent = defineCollection({
                 .refine((img) => img)
                 .optional(),
             bg: z.string().optional(),
+            bgDark: z.string().optional(),
+            fg: z.string().optional(),
         }),
 });
 
